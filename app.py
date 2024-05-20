@@ -34,8 +34,6 @@ def hamming_code_simulator_ui():
                     with col(id="parity_bits_col").style("justify-content: start;"):
                         label("PARITY BITS VALUE").style("font-weight: bold; font-size: 16px;")
                         text(id="parity", value="").style("width:100px;")
-
-                    #button(id="calc_btn", value="CALCULATE HAMMING").style("margin-top:20px;").size("400px").on("click", calculate_hamming)
                     
                     with col(id="hamming_col").style("justify-content: start;"):
                         label("HAMMING CODE").style("font-weight: bold; font-size: 16px;")
@@ -63,12 +61,12 @@ def create_table():
         with tbody("",id="table_example_body"):
                 with tr("",id="table_example_header_row"):
                     th("Bit Position")
-                    for i in range(len(HAMMING)):
+                    for i in range(len(HAMMING)-1, -1, -1):
                         th(f"{str(i)}")
 
                 with tr("",):
                     th("Position Number")
-                    for i in range(len(HAMMING)):
+                    for i in range(len(HAMMING)-1 , -1, -1):
                         th(f"{i:04b}")
 
                 with tr("",):
@@ -102,6 +100,7 @@ def set_fetched_data(ctx, id, value):
     value = value.split(",")
     fetched = [int(i) for i in value]
     FETCHED = fetched.copy()
+
     ctx.elements["error_code"].value = fetched
     ctx.elements["table"].update(create_table)
     if FETCHED != HAMMING:
@@ -114,6 +113,7 @@ def set_data(ctx, id, value):
     global DATA, HAMMING, PARITY_IDX, FETCHED
     data = [int(i) for i in value]
     DATA = data.copy()
+    ctx.elements["data"].value = data
 
     number_of_parity = calculate_number_of_parity(len(data))
     ctx.elements["num_parity"].value = number_of_parity
@@ -138,22 +138,12 @@ def set_data(ctx, id, value):
         else:
             data_with_check.append(str(data.pop(0)))
     ctx.elements["data_with_check"].value = data_with_check
-    
-    
-    
-    
-    
     ctx.elements["table"].update(create_table)
 
 def calculate_syndrome(ctx, id, value):
-    global DATA, HAMMING, PARITY_IDX
-    hamming = HAMMING
-    parity_idx = PARITY_IDX
-
-    error_syndrome = calculate_error_syndrome(hamming, parity_idx)
+    global DATA, HAMMING, PARITY_IDX, FETCHED
+    error_syndrome = calculate_error_syndrome(FETCHED, PARITY_IDX)
     ctx.elements["error_syndrome"].value = error_syndrome
-
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
