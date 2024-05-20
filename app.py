@@ -47,7 +47,7 @@ def hamming_code_simulator_ui():
                         button(id="error_btn", value="CALCULATE ERROR").style("margin-top:20px;").size("200px").on("click", calculate_syndrome)
                     
                     with col(id="syndrome_col").style("justify-content: start;"):
-                        label("ERROR SYNDROME").style("font-weight: bold; font-size: 16px;")
+                        label("ERROR SYNDROME IDX").style("font-weight: bold; font-size: 16px;")
                         text(id="error_syndrome", value="").style("width:100px;")
 
         
@@ -58,6 +58,11 @@ def hamming_code_simulator_ui():
 def create_table():
     global DATA, HAMMING, PARITY_IDX, FETCHED
     with table("", id="table_example").style("width: 70%;"):
+        with thead("",):
+            with tr("",):
+                th("IDX")
+                for i in range(1, len(HAMMING)+1):
+                    th(f"{i}")
         with tbody("",id="table_example_body"):
                 with tr("",id="table_example_header_row"):
                     th("Bit Position")
