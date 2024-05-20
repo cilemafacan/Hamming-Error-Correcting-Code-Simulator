@@ -42,12 +42,25 @@ def calculate_hamming_code(data, parity_bit_indexes):
             
     return hamming_code
 
-if __name__ == "__main__":
-    data = [1, 0, 1, 1]
-    #data = [1,1,0,0,0,1,0,0]
-    number_of_parity = calculate_number_of_parity(len(data))
-    parity_bit_indexes = calculate_parity_bit_indexes(number_of_parity)
-    parity_bits = calculate_hamming_code(data, parity_bit_indexes)
+def calculate_error_syndrome(hamming_code, parity_bit_indexes):
+    """
+    Calculate the error syndrome for the given Hamming code.
+    """
+    error_syndrome = 0
+    for parity_bit_index in parity_bit_indexes:
+        xor_result = 0
+        for i in range(len(hamming_code)):
+            if (i + 1) & (parity_bit_index + 1):
+                xor_result = xor(xor_result, hamming_code[i])
+        if xor_result != 0:
+            error_syndrome += parity_bit_index + 1
+    return error_syndrome
 
-    
-    
+def correct_error(hamming_code, error_syndrome):
+    """
+    Correct the error in the Hamming code based on the error syndrome.
+    """
+    if error_syndrome != 0:
+        error_position = error_syndrome - 1
+        hamming_code[error_position] = 0 if hamming_code[error_position] == 1 else 1
+    return hamming_code
